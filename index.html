@@ -133,29 +133,7 @@ setInterval(updateClock,1000);
 <th>Abfahrt</th>
 </tr>
 
-<tr>
-<td>41</td>
-<td>Hessenplatz</td>
-<td class="minutes">2 Min</td>
-</tr>
-
-<tr>
-<td>43</td>
-<td>Stadtfriedhof</td>
-<td class="minutes">4 Min</td>
-</tr>
-
-<tr>
-<td>43</td>
-<td>Hessenplatz</td>
-<td class="minutes">7 Min</td>
-</tr>
-
-<tr>
-<td>41</td>
-<td>Baintwiese</td>
-<td class="minutes">9 Min</td>
-</tr>
+<tbody id="departures"></tbody>
 
 </table>
 
@@ -165,14 +143,43 @@ setInterval(updateClock,1000);
 Daten werden automatisch aktualisiert
 </div>
 <script>
-fetch("https://www.linzag.at/linz-efa/XML_DM_REQUEST?name_dm=at%3A44%3A41163&outputFormat=rapidJSON&useRealtime=1&type_dm=any")
-.then(response => response.json())
-.then(data => {
-    console.log("Linz Linien Daten:", data);
-})
-.catch(error => {
-    console.log("Fehler:", error);
-});
+const API_URL =
+"https://small-butterfly-d1f0linzlive.eibensteinermario.workers.dev/";
+
+async function loadDepartures() {
+
+    const response = await fetch(API_URL);
+    const data = await response.json();
+
+    const departures = data.stopEvents || [];
+    const table = document.getElementById("departures");
+
+    let html = "";
+
+    departures.slice(0, 10).forEach(dep => {
+
+        const line =
+            dep.transportation?.number || "-";
+
+        const destination =
+            dep.transportation?.destination?.name || "-";
+
+        const countdown =
+            dep.departureTimeMinute || "-";
+
+        html += `
+        <tr>
+            <td>${line}</td>
+            <td>${destination}</td>
+            <td class="minutes">${countdown} Min</td>
+        </tr>`;
+    });
+
+    table.innerHTML = html;
+}
+
+loadDepartures();
+setInterval(loadDepartures, 30000);
 </script>
 </body>
 </html>

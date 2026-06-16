@@ -164,8 +164,8 @@ async function loadDepartures() {
         const destination =
             dep.transportation?.destination?.name || "-";
 
-        const countdown =
-            dep.departureTimeMinute || "-";
+      const countdown =
+    dep.departureTimeEstimated || dep.departureTimePlanned || "-";
 
         html += `
         <tr>

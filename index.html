@@ -165,7 +165,20 @@ async function loadDepartures() {
             dep.transportation?.destination?.name || "-";
 
       const countdown =
-    dep.departureTimeEstimated || dep.departureTimePlanned || "-";
+   const departureTime =
+    dep.departureTimeEstimated || dep.departureTimePlanned;
+
+let countdown = "-";
+
+if (departureTime) {
+    const departure = new Date(departureTime);
+    const now = new Date();
+
+    countdown = Math.max(
+        0,
+        Math.round((departure - now) / 60000)
+    );
+}
 
         html += `
         <tr>

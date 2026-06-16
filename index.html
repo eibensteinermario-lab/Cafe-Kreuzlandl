@@ -144,8 +144,8 @@ Daten werden automatisch aktualisiert
 </div>
 <script>
 const API_URL = "https://small-butterfly-d1f0linzlive.eibensteinermario.workers.dev/";
-async function loadDepartures() {
 
+async function loadDepartures() {
     const response = await fetch(API_URL);
     const data = await response.json();
 
@@ -155,28 +155,23 @@ async function loadDepartures() {
     let html = "";
 
     departures.slice(0, 10).forEach(dep => {
+        const line = dep.transportation?.number || "-";
+        const destination = dep.transportation?.destination?.name || "-";
 
-        const line =
-            dep.transportation?.number || "-";
+        const departureTime =
+            dep.departureTimeEstimated || dep.departureTimePlanned;
 
-        const destination =
-            dep.transportation?.destination?.name || "-";
+        let countdown = "-";
 
-      const countdown =
-   const departureTime =
-    dep.departureTimeEstimated || dep.departureTimePlanned;
+        if (departureTime) {
+            const departure = new Date(departureTime);
+            const now = new Date();
 
-let countdown = "-";
-
-if (departureTime) {
-    const departure = new Date(departureTime);
-    const now = new Date();
-
-    countdown = Math.max(
-        0,
-        Math.round((departure - now) / 60000)
-    );
-}
+            countdown = Math.max(
+                0,
+                Math.round((departure - now) / 60000)
+            );
+        }
 
         html += `
         <tr>
@@ -192,5 +187,3 @@ if (departureTime) {
 loadDepartures();
 setInterval(loadDepartures, 30000);
 </script>
-</body>
-</html>
